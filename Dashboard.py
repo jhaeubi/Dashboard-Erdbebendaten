@@ -12,26 +12,32 @@ df = pd.read_csv("query.csv")
 df_small = df.drop(
     columns=['locationSource', 'magSource', 'status', 'nst', 'gap', 'magError', 'magNst', 'dmin', 'rms', 'net', 'id',
              'updated', 'horizontalError', 'depthError'])
+df_small = df_small[df_small.place.str.contains(',')]
+df_small[['Distance', 'Region']] = df_small.place.str.split(',', expand=True, n=1)
 df_small[['Date', 'Time']] = df_small.time.str.split('T', expand=True)
 df_small[['Year', 'Month', 'Day']] = df_small.Date.str.split('-', expand=True)
-# if df_small.loc[df['place']].str.contains(','):
-#    df_small[['Distance', 'Region']] = df_small.place.str.split(',', expand=True)
+
 df_small['Time'] = df_small['Time'].map(lambda x: str(x)[:-1])
 
 app.layout = html.Div([
 
     html.H1("Earthquakes around the World", style={'text-align': 'center'}),
-    html.H4("Facts and Figures about Earthquakes", style={'text-align': 'left'}),
-
+    html.H4("Facts and Figures about Earthquakes around the World January - July 2020", style={'text-align': 'left'}),
+    html.P(),
     dcc.Dropdown(id='Dropdown',
                  options=[{'label': i, 'value': i} for i in df_small['Date'].unique()],
                  multi=True,
                  style={"width": "70%"}),
 
     dcc.Slider(id='my-slider',
-               min=0, max=8, step=0.1, value=0,
-               tooltip={'always_visible': True},
-               marks={0.5 * i: '{}'.format(0.5 * i) for i in range(16)}),
+                    min=0, max=8, step=0.1, value=0,
+                    tooltip={'always_visible': True},
+                    marks={0.5 * i: '{}'.format(0.5 * i) for i in range(16)}),
+
+    #dcc.RangeSlider(id='my-ranged-slider',
+     #          min=0, max=8, step=0.1, value=0,
+      #         tooltip={'always_visible': True},
+       #        marks={0.5 * i: '{}'.format(0.5 * i) for i in range(16)}),
 
     html.Div(children=[
         dcc.Graph(id='Magnitude', figure={}),
@@ -57,13 +63,14 @@ app.layout = html.Div([
 
 
 @app.callback(
-    [Output(component_id='Magnitude', component_property='figure'),
+    [#Output(component_id='output-container-range-slider', component_property='figure'),
+    Output(component_id='Magnitude', component_property='figure'),
      Output(component_id='Depth', component_property='figure'),
      Output(component_id='WorldMap', component_property='figure'),
      Output(component_id='Barplot', component_property='figure'),
      Output(component_id='Lineplot', component_property='figure')],
     [Input(component_id='Dropdown', component_property='value'),
-     Input(component_id='my-slider', component_property='value')]
+     Input(component_id='my-slider', component_property='value'),]
 )
 def update_graph(option_slctd, option_slctd2):
     dff = df_small.copy()
@@ -72,6 +79,7 @@ def update_graph(option_slctd, option_slctd2):
         dff = dff[dff["Date"].isin(option_slctd)]
     if option_slctd2 > 0:
         dff = dff[dff['mag'] == option_slctd2]
+        #dff = dff[dff['mag'].between(option_slctd2[0], option_slctd2[1], inclusive=True)]
 
     fig = px.box(dff, x='Month', y='mag')
 
@@ -89,14 +97,20 @@ def update_graph(option_slctd, option_slctd2):
                         #color_discrete_sequence=px.colors.sequential.Plasma_r)
 
     fig4 = px.bar(dff, x='Month', y='mag',
-             color='mag',
-             labels={'mag':'Magnitude'}, height=400)
+                    color='mag',
+                    labels={'mag':'Magnitude'}, height=400)
 
-    fig5 = px.parallel_coordinates(dff,
+    fig5 = px.scatter_polar(dff, r="Month", theta="Region",
+                            color="mag",
+                            color_discrete_sequence=px.colors.sequential.Plasma_r, template="plotly_dark")
+
+
+
+    """fig5 = px.parallel_coordinates(dff,
                               dimensions=['mag', 'depth', 'latitude',
                                           'longitude'],
                               color_continuous_scale=px.colors.diverging.Tealrose,
-                              color_continuous_midpoint=2)
+                              color_continuous_midpoint=2)"""
 
     return fig, fig2, fig3, fig4, fig5
 
