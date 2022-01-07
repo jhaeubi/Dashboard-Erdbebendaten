@@ -24,20 +24,34 @@ app.layout = html.Div([
     html.H1("Earthquakes around the World", style={'text-align': 'center'}),
     html.H4("Facts and Figures about Earthquakes around the World January - July 2020", style={'text-align': 'left'}),
     html.P(),
+
+    html.Label('Choose Date'),
+
     dcc.Dropdown(id='Dropdown',
                  options=[{'label': i, 'value': i} for i in df_small['Date'].unique()],
                  multi=True,
-                 style={"width": "70%", 'textAlign': 'left'}), #eventuell nur Monat
+                 style={"width": "70%", 'textAlign': 'left'}),  # eventuell nur Monat
 
-    dcc.Slider(id='my-slider',
-               min=0, max=8, step=0.1, value=0,
-               tooltip={'always_visible': True},
-               marks={0.5 * i: '{}'.format(0.5 * i) for i in range(16)}),
+    html.Label('Choose Magnitude'),
 
-    # dcc.RangeSlider(id='my-ranged-slider',
-    #          min=0, max=8, step=0.1, value=0,
-    #         tooltip={'always_visible': True},
-    #        marks={0.5 * i: '{}'.format(0.5 * i) for i in range(16)}),
+    # dcc.Slider(id='my-slider',
+    #           min=0, max=8, step=0.1, value=0,
+    #          tooltip={'always_visible': True},
+    #         marks={0.5 * i: '{}'.format(0.5 * i) for i in range(16)}),
+
+    dcc.RangeSlider(
+        id='my-range-slider',  # any name you'd like to give it
+        marks={1 * i: '{}'.format(1 * i) for i in range(8)},
+        step=0.1,  # number of steps between values
+        min=0,
+        max=8,
+        value=[0, 7.5],  # default value initially chosen
+        dots=True,  # True, False - insert dots, only when step>1
+        included=True,  # True, False - highlight handle
+        vertical=False,  # True, False - vertical, horizontal slider
+        className='None',
+        tooltip={'always visible': True,  # show current slider values
+                 'placement': 'top'}),
 
     html.Div(children=[
         dcc.Graph(id='Magnitude', figure={}),
@@ -63,35 +77,33 @@ app.layout = html.Div([
 
 
 @app.callback(
-    [  # Output(component_id='output-container-range-slider', component_property='figure'),
-        Output(component_id='Magnitude', component_property='figure'),
-        Output(component_id='Depth', component_property='figure'),
-        Output(component_id='WorldMap', component_property='figure'),
-        Output(component_id='Barplot', component_property='figure'),
-        Output(component_id='Lineplot', component_property='figure')],
+    [Output(component_id='Magnitude', component_property='figure'),
+     Output(component_id='Depth', component_property='figure'),
+     Output(component_id='WorldMap', component_property='figure'),
+     Output(component_id='Barplot', component_property='figure'),
+     Output(component_id='Lineplot', component_property='figure')],
     [Input(component_id='Dropdown', component_property='value'),
-     Input(component_id='my-slider', component_property='value'), ]
+     Input(component_id='my-range-slider', component_property='value')]
 )
 def update_graph(option_slctd, option_slctd2):
     dff = df_small.copy()
 
     if bool(option_slctd):
         dff = dff[dff["Date"].isin(option_slctd)]
-    if option_slctd2 > 0:
-        dff = dff[dff['mag'] == option_slctd2]
-        # dff = dff[dff['mag'].between(option_slctd2[0], option_slctd2[1], inclusive=True)]
+    """if option_slctd2 > 0:
+        dff = dff[dff['mag'] == option_slctd2]"""
+
+    dff = dff[dff['mag'].between(option_slctd2[0], option_slctd2[1], inclusive=True)]
 
     fig = px.box(dff, x='Month', y='mag')
-    fig.update_layout(title={'text':'Boxplot Magnitude und Monat'},
-                      yaxis={'title':'Magnitude'},
-                      xaxis={'title':'Month'})
+    fig.update_layout(title={'text': 'Boxplot Magnitude und Monat'},
+                      yaxis={'title': 'Magnitude'},
+                      xaxis={'title': 'Month'})
 
     fig2 = px.density_heatmap(dff, x="mag", y="depth", marginal_x="rug", marginal_y="histogram")
     fig2.update_layout(title={'text': 'Vergleich Magnitude, Depth mit Anzahl Erdbeben'},
                        yaxis={'title': 'Depth'},
                        xaxis={'title': 'Magnitude'})
-
-
 
     fig3 = px.density_mapbox(dff, lat='latitude', lon='longitude', z='mag',
                              hover_name='place', hover_data=['Date'],
@@ -115,7 +127,6 @@ def update_graph(option_slctd, option_slctd2):
                             color="mag",
                             color_discrete_sequence=px.colors.sequential.Plasma_r, template="plotly_dark")
     fig5.update_layout(title={'text': 'Polarchart zum Vergleich der Regionen'})
-
 
     """fig5 = px.parallel_coordinates(dff,
                               dimensions=['mag', 'depth', 'latitude',
