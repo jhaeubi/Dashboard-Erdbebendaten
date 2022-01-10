@@ -50,3 +50,8 @@ fig.show()
 fig.update_layout(yaxis={'title':'Incoming Border Crossings'},
                       title={'text':'Border Crossing into the United States',
                       'font':{'size':28},'x':0.5,'xanchor':'center'})
+
+dcc.Dropdown(id='Dropdown',
+                 options=[{'label': i, 'value': i} for i in df_small['Date'].unique()],
+                 multi=True,
+                 style={"width": "70%", 'textAlign': 'left'}),  # eventuell nur Monat

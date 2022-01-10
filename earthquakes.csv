@@ -1,4 +1,4 @@
-time,latitude,longitude,depth,mag,magType,nst,gap,dmin,rms,net,id,updated,place,type,horizontalError,depthError,magError,magNst,status,locationSource,magSource
+time,latitude,longitude,depth,magnitude,magType,nst,gap,dmin,rms,net,id,updated,place,type,horizontalError,depthError,magError,magNst,status,locationSource,magSource
 2021-10-11T09:44:39.191Z,56.361,-156.4747,81.9,2.7,ml,,,,0.28,ak,ak021d1u8zjf,2021-10-11T09:50:38.207Z,"119 km E of Chignik, Alaska",earthquake,,1.5,,,automatic,ak,ak
 2021-10-11T09:30:52.082Z,56.4031,-156.5252,63.3,3.2,ml,,,,0.8,ak,ak021d1u606z,2021-10-11T09:41:22.007Z,"116 km E of Chignik, Alaska",earthquake,,1.6,,,automatic,ak,ak
 2021-10-11T09:28:47.182Z,56.2908,-156.5319,48.6,2.9,ml,,,,0.42,ak,ak021d1u5kat,2021-10-11T09:32:14.982Z,"115 km E of Chignik, Alaska",earthquake,,2.8,,,automatic,ak,ak

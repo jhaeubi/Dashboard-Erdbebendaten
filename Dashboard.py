@@ -19,18 +19,41 @@ df_small[['Year', 'Month', 'Day']] = df_small.Date.str.split('-', expand=True)
 
 df_small['Time'] = df_small['Time'].map(lambda x: str(x)[:-1])
 
+markdown_text = """
+## Earthquakes around the World
+### Facts and Figures about Earthquakes around the World January 1st 2021 to July 1st 2021.
+
+**Time Period:** 1.1.2021 to 1.07.2021  
+**Area:**            Worldwide  
+**Place:**           Distance in km to nearest Settlement  
+**Regions:**         Country or State of the USA  
+
+**Magnitude:**       Strength according to Richter scale  
+**Depth:**           Earthquakefocus (hypocenter) below the epicenter in km  
+
+**Source:**          https://earthquake.usgs.gov/
+"""
+
 app.layout = html.Div([
 
-    html.H1("Earthquakes around the World", style={'text-align': 'center'}),
-    html.H4("Facts and Figures about Earthquakes around the World January - July 2020", style={'text-align': 'left'}),
+    # html.H1("Earthquakes around the World", style={'text-align': 'center'}),
+    # html.H4("Facts and Figures about Earthquakes around the World January - July 2020", style={'text-align': 'left'}),
     html.P(),
 
-    html.Label('Choose Date'),
+    html.Label('Choose Month'),
 
     dcc.Dropdown(id='Dropdown',
-                 options=[{'label': i, 'value': i} for i in df_small['Date'].unique()],
+                 options=[
+                     {'label': 'January', 'value': '01'},
+                     {'label': 'February', 'value': '02'},
+                     {'label': 'March', 'value': '03'},
+                     {'label': 'April', 'value': '04'},
+                     {'label': 'May', 'value': '05'},
+                     {'label': 'June', 'value': '06'},
+                     {'label': 'July', 'value': '07'},
+                 ],
                  multi=True,
-                 style={"width": "70%", 'textAlign': 'left'}),  # eventuell nur Monat
+                 style={"width": "70%", 'textAlign': 'left'}),
 
     html.Label('Choose Magnitude'),
 
@@ -61,16 +84,17 @@ app.layout = html.Div([
                'width': '25vw', 'height': '45vh'}),
 
     html.Div(children=[
-        dcc.Graph(id='WorldMap', figure={})],
+        dcc.Graph(id='WorldMap', figure={}),
+        dcc.Markdown(id='my-markdown', children=markdown_text)],
         style={'display': 'inline-block', 'vertical-align': 'middle',
                'margin-left': '2.5vw', 'margin-top': '2.5vw',
-               'width': '40vw', 'height': '100vh'}),
+               'width': '40vw', 'height': '95vh'}),
 
     html.Div(children=[
         dcc.Graph(id='Barplot', figure={}),
         dcc.Graph(id='Lineplot', figure={})],
         style={'display': 'inline-block', 'vertical-align': 'topright',
-               'margin-left': '2.5vw', 'margin-top': '2.4vw',
+               'margin-left': '2.5vw', 'margin-top': '2.5vw',
                'width': '25vw', 'height': '45vh'})
 
 ])
@@ -89,50 +113,37 @@ def update_graph(option_slctd, option_slctd2):
     dff = df_small.copy()
 
     if bool(option_slctd):
-        dff = dff[dff["Date"].isin(option_slctd)]
-    """if option_slctd2 > 0:
-        dff = dff[dff['mag'] == option_slctd2]"""
+        dff = dff[dff["Month"].isin(option_slctd)]
 
-    dff = dff[dff['mag'].between(option_slctd2[0], option_slctd2[1], inclusive=True)]
+    dff = dff[dff['magnitude'].between(option_slctd2[0], option_slctd2[1], inclusive=True)]
 
-    fig = px.box(dff, x='Month', y='mag')
-    fig.update_layout(title={'text': 'Boxplot Magnitude und Monat'},
+    fig = px.box(dff, x='Month', y='magnitude')
+    fig.update_layout(title={'text': 'Mean values of magnitude per month'},
                       yaxis={'title': 'Magnitude'},
                       xaxis={'title': 'Month'})
 
-    fig2 = px.density_heatmap(dff, x="mag", y="depth", marginal_x="rug", marginal_y="histogram")
-    fig2.update_layout(title={'text': 'Vergleich Magnitude, Depth mit Anzahl Erdbeben'},
+    fig2 = px.density_heatmap(dff, x="magnitude", y="depth", marginal_x="rug", marginal_y="histogram", template='plotly_dark')
+    fig2.update_layout(title={'text': 'Comparison magnitude and depth, count of quakes'},
                        yaxis={'title': 'Depth'},
                        xaxis={'title': 'Magnitude'})
 
-    fig3 = px.density_mapbox(dff, lat='latitude', lon='longitude', z='mag',
+    fig3 = px.density_mapbox(dff, lat='latitude', lon='longitude', z='magnitude',
                              hover_name='place', hover_data=['Date'],
-                             radius=10, center=dict(lat=0, lon=0), zoom=0, mapbox_style="stamen-terrain")
-    fig3.update_layout(title={'text': 'Data around the World'})
+                             radius=10, center=dict(lat=0, lon=0), zoom=0, mapbox_style="stamen-terrain", template='plotly_dark')
+    fig3.update_layout(title={'text': 'World map with all the data(magnitude by color)'})
 
-    # fig4 = px.bar_polar(dff, r="mag", theta="latitude", color="depth", template="plotly_dark",
-    # color_discrete_sequence=px.colors.sequential.Plasma_r)
-
-    # fig4 = px.line_polar(dff, r="mag", theta="longitude", color="depth", line_close=True,
-    # color_discrete_sequence=px.colors.sequential.Plasma_r)
-
-    fig4 = px.bar(dff, x='Month', y='mag',
-                  color='mag',
-                  labels={'mag': 'Magnitude'}, height=400)
-    fig4.update_layout(title={'text': 'Anzahl der Erdbeben pro Magnitude'},
-                       yaxis={'title': 'Anzahl'},
+    fig4 = px.bar(dff, x='Month', y='magnitude',
+                  color='magnitude',
+                  labels={'mag': 'Magnitude'}, height=450)
+    fig4.update_layout(title={'text': 'Number of earthquakes per magnitude'},
+                       yaxis={'title': 'Count'},
                        xaxis={'title': 'Month'})
 
     fig5 = px.scatter_polar(dff, r="Month", theta="Region",
-                            color="mag",
+                            color="magnitude",
                             color_discrete_sequence=px.colors.sequential.Plasma_r, template="plotly_dark")
-    fig5.update_layout(title={'text': 'Polarchart zum Vergleich der Regionen'})
+    fig5.update_layout(title={'text': 'Comparison of the regions per magnitude'})
 
-    """fig5 = px.parallel_coordinates(dff,
-                              dimensions=['mag', 'depth', 'latitude',
-                                          'longitude'],
-                              color_continuous_scale=px.colors.diverging.Tealrose,
-                              color_continuous_midpoint=2)"""
 
     return fig, fig2, fig3, fig4, fig5
 
