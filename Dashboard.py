@@ -40,7 +40,7 @@ app.layout = html.Div([
     # html.H4("Facts and Figures about Earthquakes around the World January - July 2020", style={'text-align': 'left'}),
     html.P(),
 
-    html.Label('Choose Month', style={'font': 'Arial'}),
+    html.Label('Choose Month', style={'font-family': 'Arial'}),
 
     dcc.Dropdown(id='Dropdown',
                  options=[
@@ -53,9 +53,9 @@ app.layout = html.Div([
                      {'label': 'July', 'value': '07'},
                  ],
                  multi=True,
-                 style={"width": "70%", 'textAlign': 'left'}),
+                 style={"width": "70%", 'textAlign': 'left', 'font-family': 'Arial'}),
 
-    html.Label('Choose Magnitude', style={'font': 'Arial'}),
+    html.Label('Choose Magnitude', style={'font-family': 'Arial'}),
 
     # dcc.Slider(id='my-slider',
     #           min=0, max=8, step=0.1, value=0,
@@ -81,21 +81,21 @@ app.layout = html.Div([
         dcc.Graph(id='Depth', figure={})],
         style={'display': 'inline-block', 'vertical-align': 'topleft',
                'margin-left': '2.5vw', 'margin-top': '2.5vw',
-               'width': '25vw', 'height': '45vh', 'font': 'Arial'}),
+               'width': '25vw', 'height': '45vh', 'font-family': 'Arial'}),
 
     html.Div(children=[
         dcc.Graph(id='WorldMap', figure={}),
         dcc.Markdown(id='my-markdown', children=markdown_text)],
         style={'display': 'inline-block', 'vertical-align': 'middle',
                'margin-left': '2.5vw', 'margin-top': '2.5vw',
-               'width': '40vw', 'height': '95vh', 'font': 'Arial'}),
+               'width': '40vw', 'height': '95vh', 'font-family': 'Arial'}),
 
     html.Div(children=[
         dcc.Graph(id='Barplot', figure={}),
         dcc.Graph(id='Lineplot', figure={})],
         style={'display': 'inline-block', 'vertical-align': 'topright',
                'margin-left': '2.5vw', 'margin-top': '2.5vw',
-               'width': '25vw', 'height': '45vh', 'font': 'Arial'})
+               'width': '25vw', 'height': '45vh', 'font-family': 'Arial'})
 
 ])
 
@@ -153,7 +153,8 @@ def update_graph(option_slctd, option_slctd2):
 
     fig5 = px.scatter_polar(dff, r="Month", theta="Region",
                             color="Magnitude",
-                            color_discrete_sequence=px.colors.sequential.Plasma_r, template="plotly_dark")
+                            color_discrete_sequence=px.colors.sequential.Plasma_r, template="plotly_dark",
+                            range_r=(0,7))
     fig5.update_layout(title={'text': 'Comparison of the regions per magnitude'},
                        font=dict(family='Arial'))
 
