@@ -36,8 +36,6 @@ markdown_text = """
 
 app.layout = html.Div([
 
-    # html.H1("Earthquakes around the World", style={'text-align': 'center'}),
-    # html.H4("Facts and Figures about Earthquakes around the World January - July 2020", style={'text-align': 'left'}),
     html.P(),
 
     html.Label('Choose Month', style={'font-family': 'Arial'}),
