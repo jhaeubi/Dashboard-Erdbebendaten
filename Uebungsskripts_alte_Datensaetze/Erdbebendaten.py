@@ -3,7 +3,7 @@
 import pandas as pd
 import plotly.express as px
 
-df = pd.read_csv('query.csv')
+df = pd.read_csv('../query.csv')
 print(df)
 df_small = df.drop(columns=['locationSource', 'magSource', 'status', 'nst', 'gap', 'magError', 'magNst', 'dmin', 'rms', 'net', 'id', 'updated', 'horizontalError', 'depthError'])
 """Weglassen von Attributen, welche für die weiteren Untersuchungen vorerst nicht von Bedeutung sind. So wird der Dataframe diesbezüglich etwas übersichtlicher."""
