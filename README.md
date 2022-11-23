@@ -74,10 +74,12 @@ You can gain information on how many earthquakes happened in a certain depth, wi
 ### Barplot
 With the help of a barplot, it's possible to gain insights on the amount of earthquakes of a specific magnitude in a certain month.
 This visualization is more helpful, when limits to the parameters have been set, otherwise there is too much information displayed. 
+
 ![](images/Barplot.png)
 
 
 ### Polarchart
 The last plot selected is a polar chart. It shows information on the spread of magnitude in one month in an area or country.
+
 ![](images/Polarchart.png)
 
