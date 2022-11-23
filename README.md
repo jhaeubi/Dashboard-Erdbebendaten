@@ -1,4 +1,5 @@
 # Dashboard on Earthquakes
+
 ![](images/Abbildung_Anwendungsbeispiel_March.JPG)
 
 ## Idea
@@ -41,12 +42,14 @@ There are two possible interactions with the dashboard.
 
 ### Dropdown
 The dashboard lets you choose one or more months for which the data should be visualized. If nothing is chosen, the whole dataset will be displayed.
+
 ![](images/Dropdown.png)
 
 
 ### Ranged Slider
 In addition, it's also possible to select the visualized earthquakes having a specific magnitude.
 That can be done by a ranged slider, which lets you chose a range between 0 and 7.5 in 0.5 steps.
+
 ![](images/Slider.png)
 
 
@@ -56,18 +59,21 @@ The chosen dataset gets visualized by five different plots.
 As the main visualization we chose a world map, where all earthquakes that fit the chosen parameters (Month/Magnitude) are represented by a dot on the map, according to longitude/latitude and
 the magnitude. The longitude/latitude defines where on the map the point is, and the magnitude is shown through the color of the dot.
 By hovering over selected dots, more information on the earthquake is shown.
+
 ![](images/Worldmap.png)
 
 
 ### Boxplot
 As a second visualization we chose a boxplot, which shows the mean of the magnitude in a month. When hovering over the boxes, you can get additional information,
 such as median, quartile, maximum or minimum.
+
 ![](images/Boxplot.png)
 
 
 ### Heatmap
 To visualize the total of earthquakes in relation to depth and magnitude, we chose to use a density heatmap.
 You can gain information on how many earthquakes happened in a certain depth, with a certain magnitude.
+
 ![](images/Heatmap.png)
 
 
